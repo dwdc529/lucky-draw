@@ -34,6 +34,34 @@ class LuckydrawIndecDB {
   constructor() {
     this.InitIndexedDB();
   }
+  addMultiple = (TableName, items) => {
+    let tobeadd = 0;
+    const addInfo = {
+      createdTime: Date.now(),
+      updateTime: Date.now()
+    };
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([TableName], 'readwrite');
+      const objectStore = transaction.objectStore(TableName);
+
+      items.forEach(item => {
+        tobeadd++;
+        const objectStoreRequest = objectStore.add(
+          Object.assign({}, addInfo, item)
+        );
+
+        objectStoreRequest.onsuccess = () => {
+          tobeadd--;
+          if (tobeadd === 0) {
+            resolve(true);
+          }
+        };
+        objectStoreRequest.onerror = error => {
+          reject(error.target.error);
+        };
+      });
+    });
+  };
   add = (TableName, newItem) => {
     const addInfo = {
       createdTime: Date.now(),

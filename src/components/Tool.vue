@@ -12,6 +12,9 @@
     <el-button size="mini" @click="showImportphoto = true">
       导入照片
     </el-button>
+    <el-button size="mini" @click="showBatchImport = true">
+      批量导入
+    </el-button>
     <el-dialog :append-to-body="true" :visible.sync="showSetwat" class="setwat-dialog" width="400px">
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <el-form-item label="抽取奖项">
@@ -48,12 +51,12 @@
           </el-input>
         </el-form-item>
 
-        <!-- <el-form-item label="全员参与">
+        <el-form-item label="全员参与">
           <el-switch v-model="form.allin"></el-switch>
           <span :style="{ fontSize: '12px' }">
             (开启后将在全体成员[无论有无中奖]中抽奖)
           </span>
-        </el-form-item> -->
+        </el-form-item>
 
         <el-form-item>
           <el-button type="primary" @click="onSubmit">立即抽奖</el-button>
@@ -74,6 +77,7 @@
       </div>
     </el-dialog>
     <Importphoto :visible.sync="showImportphoto" @getPhoto="$emit('getPhoto')"></Importphoto>
+    <Batchimport :visible.sync="showBatchImport" @getPhoto="$emit('getPhoto')"></Batchimport>
 
     <el-dialog :visible.sync="showRemoveoptions" width="300px" class="c-removeoptions" :append-to-body="true">
       <el-form ref="form" :model="removeInfo" label-width="80px" size="mini">
@@ -105,6 +109,7 @@
     conversionCategoryName
   } from '@/helper/index';
   import Importphoto from './Importphoto';
+  import Batchimport from './Batchimport';
   import { database, DB_STORE_NAME } from '@/helper/db';
 
   export default {
@@ -147,12 +152,13 @@
         return options;
       }
     },
-    components: { Importphoto },
+    components: { Importphoto, Batchimport },
     data() {
       return {
         showSetwat: false,
         showImport: false,
         showImportphoto: false,
+        showBatchImport: false,
         showRemoveoptions: false,
         removeInfo: { type: 0 },
         form: {
@@ -246,10 +252,7 @@
           }
         }
         this.showSetwat = false;
-        this.$emit(
-          'toggle',
-          Object.assign({}, this.form, { remain: this.remain })
-        );
+        this.$emit('toggle', Object.assign({}, this.form, { remain: this.remain }));
       },
       startHandler() {
         this.$emit('toggle');
@@ -292,7 +295,7 @@
     }
   };
 </script>
-<style lang="scss">
+<style type="text/css">
   #tool {
     position: fixed;
     width: 60px;
@@ -305,33 +308,33 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    .el-button + .el-button {
-      margin-top: 20px;
-      margin-left: 0px;
-    }
   }
-  .setwat-dialog {
-    .colorred {
-      color: red;
-      font-weight: bold;
-    }
+
+  #tool .el-button+.el-button {
+    margin-top: 20px;
+    margin-left: 0px;
   }
-  .import-dialog {
-    .footer {
-      height: 50px;
-      line-height: 50px;
-      text-align: center;
-    }
+
+  .setwat-dialog .colorred {
+    color: red;
+    font-weight: bold;
   }
-  .c-removeoptions {
-    .el-dialog {
-      height: 290px;
-    }
-    .el-radio.is-bordered + .el-radio.is-bordered {
-      margin-left: 0px;
-    }
-    .el-radio.is-bordered {
-      margin-bottom: 10px;
-    }
+
+  .import-dialog .footer {
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+  }
+
+  .c-removeoptions .el-dialog {
+    height: 290px;
+  }
+
+  .c-removeoptions .el-radio.is-bordered+.el-radio.is-bordered {
+    margin-left: 0px;
+  }
+
+  .c-removeoptions .el-radio.is-bordered {
+    margin-bottom: 10px;
   }
 </style>

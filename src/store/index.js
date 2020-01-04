@@ -12,14 +12,14 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     config: {
-      name: '年会抽奖',
-      number: 70,
-      specialAward: 0,
-      firstPrize: 1,
+      name: '深圳市晶泓科技有限公司2020年会抽奖程序',
+      number: 174,
+      specialAward: 2,
+      firstPrize: 3,
       secondPrize: 5,
-      thirdPrize: 8,
-      fourthPrize: 10,
-      fifthPrize: 20
+      thirdPrize: 10,
+      fourthPrize: 0,
+      fifthPrize: 0
     },
     result: {
       specialAward: [],
@@ -36,14 +36,14 @@ export default new Vuex.Store({
   mutations: {
     setClearConfig(state) {
       state.config = {
-        name: '年会抽奖',
-        number: 70,
-        specialAward: 0,
-        firstPrize: 1,
+        name: '深圳市晶泓科技有限公司2020年会抽奖程序',
+        number: 174,
+        specialAward: 2,
+        firstPrize: 3,
         secondPrize: 5,
-        thirdPrize: 8,
-        fourthPrize: 10,
-        fifthPrize: 20
+        thirdPrize: 10,
+        fourthPrize: 0,
+        fifthPrize: 0
       };
       state.newLottery = [];
     },
@@ -65,14 +65,14 @@ export default new Vuex.Store({
     },
     setClearStore(state) {
       state.config = {
-        name: '年会抽奖',
-        number: 70,
-        specialAward: 0,
-        firstPrize: 1,
+        name: '深圳市晶泓科技有限公司2020年会抽奖程序',
+        number: 174,
+        specialAward: 2,
+        firstPrize: 3,
         secondPrize: 5,
-        thirdPrize: 8,
-        fourthPrize: 10,
-        fifthPrize: 20
+        thirdPrize: 10,
+        fourthPrize: 0,
+        fifthPrize: 0
       };
       state.result = {
         specialAward: [],
@@ -116,6 +116,7 @@ export default new Vuex.Store({
       setData(listField, arr);
     },
     setPhotos(state, photos) {
+      console.log('photos', photos);
       state.photos = photos;
     }
   },

@@ -1,24 +1,24 @@
 <template>
-  <el-dialog :visible="visible" :append-to-body="true" width="300px" @close="$emit('update:visible', false)"
-    class="c-Importphoto">
-    <el-row>
-      <label for="idinput">抽奖号码</label>
-      <el-input id="idinput" size="mini" type="number" v-model="id" :min="0" :max="config.number"></el-input>
-    </el-row>
+  <el-dialog :visible="visible" :append-to-body="true" width="785px" @close="$emit('update:visible', false)"
+    class="c-Importphoto" :lock-scroll="false">
     <el-row>
       <label for="idinput">照片选择</label>
-      <span class="selectbg" :data-tip="filename">
-        <input ref="uploadinput" class="upload" type="file" accept=".jpg,.png" @change="inputChange" />
+      <span class="selectbg" :data-tip="selectTip">
+        <input ref="uploadinput" class="upload" type="file" accept=".jpg,.png" @change="inputChange" multiple />
       </span>
     </el-row>
     <el-row class="photo">
-      <label>已选照片</label>
-      <img v-if="value" :src="value" alt="img" :width="140" :height="140" />
+      <label>已选照片</label> 共 <i style="color: red;">{{ images.length }}</i> 张
+      <ul v-if="images">
+        <li v-for="value in images" :key="value.source">
+          <img :src="value.source" alt="img" :width="40" :height="40" />
+        </li>
+      </ul>
       <span v-else>暂未选择</span>
     </el-row>
-    <el-row>
+    <!-- <el-row>
       支持jpg和png，照片大小不能超过150kb,建议20-50kb，建议尺寸为160*160px
-    </el-row>
+    </el-row> -->
     <el-row class="center">
       <el-button size="mini" type="primary" @click="saveHandler">保存</el-button>
       <el-button size="mini" @click="$emit('update:visible', false)">取消</el-button>
@@ -27,9 +27,10 @@
 </template>
 <script>
   import { database, DB_STORE_NAME } from '@/helper/db';
+  import { loadImages } from '@/helper/algorithm';
 
   export default {
-    name: 'Importphoto',
+    name: 'Batchimport',
     props: {
       visible: Boolean
     },
@@ -42,63 +43,55 @@
     },
     data() {
       return {
-        id: 0,
-        value: '',
-        filename: '点击选择照片'
+        images: [],
+        selectTip: '点击选择照片'
       };
     },
     methods: {
       inputChange(e) {
+        const files = [];
         const fileList = e.target.files;
-        const formData = new FormData();
-        formData.append('uploadImg', fileList[0]);
-        const reader = new FileReader();
-        const AllowImgFileSize = 1024 * 150;
-        const file = fileList[0];
-        if (file) {
-          this.filename = file.name;
-          reader.readAsDataURL(file);
-          reader.onload = () => {
-            if (AllowImgFileSize != 0 && AllowImgFileSize < reader.result.length) {
-              return this.$message.error('不允许上传大于150KB的图片');
-            } else {
-              this.value = reader.result;
-            }
-          };
+
+        for (let i = 0; i < fileList.length; i++) {
+          files.push(fileList[i]);
         }
+
+        const errExtName = Object.values(files).filter(f => {
+          const extName = f.name.substring(f.name.lastIndexOf('.') + 1);
+          return !extName || ['PNG', 'JPG'].indexOf(extName.toUpperCase()) < 0;
+        });
+
+        if (errExtName.length) {
+          return this.$message.error('您所选的文件包含不支持的文件格式');
+        }
+
+        const AllowImgFileSize = 1024 * 150;
+        const errSize = files.every(file => AllowImgFileSize < file.size);
+        if (errSize.length) {
+          return this.$message.error('不允许上传大于150KB的图片');
+        }
+
+        loadImages(files).then((result) => {
+          this.images = result;
+        });
+
       },
       async saveHandler() {
-        const { id, value, filename } = this;
-        const ID = Number(id);
-        const name = filename ? filename.replace(/(.*\/)*([^.]+).*/ig, "$2") : '';
-        if (!ID || ID <= 0) {
-          return this.$message.error('号码必须大于0的整数');
-        }
-        if (!value) {
-          return this.$message.error('请选择照片');
-        }
-        const Data = await database.get(DB_STORE_NAME, ID);
-        const param = {
-          id: ID,
-          value,
-          name
-        };
-        database[Data ? 'edit' : 'add'](
-          DB_STORE_NAME,
-          Data ? ID : param,
-          Data ? param : null
-        )
+
+        const items = this.images.map((m, i) => ({
+          id: i + 1,
+          value: m.source,
+          name: m.filename ? m.filename.replace(/(.*\/)*([^.]+).*/ig, "$2") : ''
+        }));
+
+        database['addMultiple'](DB_STORE_NAME, items)
           .then(res => {
             if (res) {
               this.$refs.uploadinput.value = '';
-              this.value = '';
-              this.filename = '点击选择照片';
+              this.images = [];
               this.$emit('update:visible', false);
               this.$emit('getPhoto');
-              this.$message({
-                message: '保存成功',
-                type: 'success'
-              });
+              this.$message({ message: '保存成功', type: 'success' });
             } else {
               this.$message.error('保存失败');
             }
@@ -112,7 +105,7 @@
 </script>
 <style type="text/css">
   .c-Importphoto .el-dialog {
-    height: 380px;
+    height: auto;
   }
 
   .c-Importphoto label {
@@ -140,6 +133,7 @@
     height: 28px;
     position: relative;
     box-sizing: border-box;
+    cursor: pointer;
   }
 
   .c-Importphoto .selectbg::before {
@@ -167,8 +161,29 @@
     cursor: pointer;
   }
 
-  .c-Importphoto .photo img {
+  .c-Importphoto .photo ul {
+    margin-top: 10px;
+    padding: 10px;
+    min-height: 20vh;
+    max-height: 40vh;
+    overflow-y: auto;
+    background: #f7f7f7;
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .c-Importphoto .photo ul li {
+    margin: 5px;
+    padding: 4px;
     border: 1px solid #ccc;
+  }
+
+  .c-Importphoto .photo img {
+    /* border: 1px solid #ccc;
+	 */
+    border: none;
   }
 
   .c-Importphoto .photo span {

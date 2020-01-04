@@ -24,7 +24,7 @@
     </div>
     <transition name="bounce">
       <div id="resbox" v-show="showRes">
-        <p @click="showRes = false">{{ categoryName }}抽奖结果：</p>
+        <p @click="showRes = false">恭喜中得：{{ categoryName }}</p>
         <div class="container">
           <span v-for="item in resArr" :key="item" class="itemres" :style="resCardStyle" :data-id="item"
             :data-name="(photos.find(d => d.id === item)||{}).name" @click="showRes = false" :class="{
@@ -318,7 +318,7 @@
     }
   };
 </script>
-<style lang="scss">
+<style type="text/css">
   #root {
     height: 100%;
     position: relative;
@@ -326,61 +326,73 @@
     background-size: 100% 100%;
     background-position: center center;
     background-repeat: no-repeat;
-    background-color: #121936;
-    .mask {
-      -webkit-filter: blur(5px);
-      filter: blur(5px);
-    }
-    header {
-      height: 50px;
-      line-height: 50px;
-      position: relative;
-      .el-button {
-        position: absolute;
-        top: 17px;
-        padding: 0;
-        z-index: 9999;
-        &.con {
-          right: 20px;
-          color: #fff;
-        }
-        &.res {
-          right: 100px;
-          color: #fff;
-        }
-      }
-    }
-    .audio {
-      position: absolute;
-      top: 100px;
-      right: 30px;
-      width: 40px;
-      height: 40px;
-      line-height: 40px;
-      border: 1px solid #fff;
-      border-radius: 50%;
-      padding: 0;
-      text-align: center;
-      color: #fff;
-      .iconfont {
-        position: relative;
-        left: 1px;
-      }
-    }
-    .copy-right {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      color: #ccc;
-      font-size: 12px;
-    }
-    .bounce-enter-active {
-      animation: bounce-in 1.5s;
-    }
-    .bounce-leave-active {
-      animation: bounce-in 0s reverse;
-    }
+    /* background-color: #121936; */
+    background-color: rgb(253, 63, 63);
   }
+
+  #root .mask {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+  }
+
+  #root header {
+    height: 50px;
+    line-height: 50px;
+    position: relative;
+  }
+
+  #root header .el-button {
+    position: absolute;
+    top: 17px;
+    padding: 0;
+    z-index: 9999;
+  }
+
+  #root header .el-button.con {
+    right: 20px;
+    color: #fff;
+  }
+
+  #root header .el-button.res {
+    right: 100px;
+    color: #fff;
+  }
+
+  #root .audio {
+    position: absolute;
+    top: 100px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    padding: 0;
+    text-align: center;
+    color: #fff;
+  }
+
+  #root .audio .iconfont {
+    position: relative;
+    left: 1px;
+  }
+
+  #root .copy-right {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: #ccc;
+    font-size: 12px;
+  }
+
+  #root .bounce-enter-active {
+    animation: bounce-in 1.5s;
+  }
+
+  #root .bounce-leave-active {
+    animation: bounce-in 0s reverse;
+  }
+
   #main {
     height: 100%;
   }
@@ -392,56 +404,68 @@
     width: 1280px;
     transform: translateX(-50%) translateY(-50%);
     text-align: center;
-    p {
-      color: #fcfcfc;
-      font-size: 50px;
-      line-height: 120px;
-    }
-    .container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .itemres {
-      background: #fff;
-      width: 160px;
-      height: 160px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      line-height: 160px;
-      font-weight: bold;
-      margin-right: 20px;
-      margin-bottom: 20px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      .cont {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      &.numberOver::before {
-        /* content: attr(data-id); */
-        content: attr(data-name);
-        /* width: 30px; */
-        width: 100%;
-        /* height: 22px; */
-        height: 26px;
-        /* line-height: 22px; */
-        line-height: 26px;
-        /* background-color: #fff; */
-        background-color: rgba(99, 81, 81, 0.4);
-        color: #fff;
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        /* font-size: 14px; */
-        font-size: 16px;
-        /* border-radius: 50%; */
-        z-index: 1;
-      }
-    }
+  }
+
+  #resbox p {
+    color: #fcfcfc;
+    font-size: 50px;
+    line-height: 120px;
+  }
+
+  #resbox .container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  #resbox .itemres {
+    background: #fff;
+    width: 160px;
+    height: 160px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    line-height: 160px;
+    font-weight: bold;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  #resbox .itemres .cont {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #resbox .itemres.numberOver::before {
+    /* content: attr(data-id);
+	 */
+    content: attr(data-name);
+    /* width: 30px;
+	 */
+    width: 100%;
+    /* height: 22px;
+	 */
+    height: 26px;
+    /* line-height: 22px;
+	 */
+    line-height: 26px;
+    /* background-color: #fff;
+	 */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    /* font-size: 14px;
+	 */
+    font-size: 16px;
+    /* border-radius: 50%;
+	 */
+    z-index: 1;
   }
 </style>

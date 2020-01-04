@@ -46,3 +46,56 @@ export function luckydrawHandler(total, won = [], num) {
   }
   return res;
 }
+
+export function loadImages(files) {
+
+  return new Promise((resolve, reject) => {
+    let tobeload = 0;
+    const data = [];
+
+    files.forEach(file => {
+      tobeload++;
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        tobeload--;
+        data.push({ source: reader.result, filename: file.name });
+        if (tobeload === 0) {
+          resolve(data);
+        }
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsDataURL(file);
+    });
+
+  });
+}
+
+export function loadImages2(files) {
+
+  return new Promise((resolve, reject) => {
+    let tobeload = 0;
+    const data = [];
+
+    files.forEach(file => {
+      const url = URL.createObjectURL(file);
+      tobeload++;
+      const image = new Image();
+
+      data.push({ source: url, filename: file.name });
+
+      image.onload = () => {
+        tobeload--;
+        if (tobeload === 0) {
+          resolve(data);
+        }
+      };
+      image.onerror = (error) => {
+        reject(error);
+      };
+      image.src = url;
+    });
+  });
+}
