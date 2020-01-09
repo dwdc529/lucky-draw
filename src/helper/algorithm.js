@@ -47,6 +47,21 @@ export function luckydrawHandler(total, won = [], num) {
   return res;
 }
 
+export function shuffle(arr) {
+  let i = arr.length;
+  while (i) {
+    let j = Math.floor(Math.random() * i--);
+    [arr[j], arr[i]] = [arr[i], arr[j]];
+  }
+}
+
+export function getRepeatNum(arr) {
+  return arr.reduce((prev, next) => {
+    prev[next] = (prev[next] + 1) || 1;
+    return prev;
+  }, {});
+}
+
 export function loadImages(files) {
 
   return new Promise((resolve, reject) => {

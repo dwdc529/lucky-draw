@@ -101,6 +101,12 @@ export default new Vuex.Store({
       state.newLottery.push(newLottery);
       setData(newLotteryField, state.newLottery);
     },
+    setDepartment(state, departmentCount) {
+      setData('departmentCount', departmentCount);
+    },
+    setPeopleNum(state, peopleNum) {
+      setData('peopleNum', peopleNum);
+    },
     setList(state, list) {
       const arr = state.list;
       list.forEach(item => {
@@ -116,7 +122,7 @@ export default new Vuex.Store({
       setData(listField, arr);
     },
     setPhotos(state, photos) {
-      console.log('photos', photos);
+      // console.log('photos', photos);
       state.photos = photos;
     }
   },

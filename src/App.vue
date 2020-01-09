@@ -302,6 +302,8 @@
           );
           this.resArr = resArr;
 
+          // console.log('中奖号码', resArr);
+
           this.category = category;
           if (!this.result[category]) {
             this.$set(this.result, category, []);

@@ -20,14 +20,15 @@
       支持jpg和png，照片大小不能超过150kb,建议20-50kb，建议尺寸为160*160px
     </el-row> -->
     <el-row class="center">
-      <el-button size="mini" type="primary" @click="saveHandler">保存</el-button>
       <el-button size="mini" @click="$emit('update:visible', false)">取消</el-button>
+      <el-button size="mini" type="warning" @click="randomSort">重排</el-button>
+      <el-button size="mini" type="primary" @click="saveHandler">保存</el-button>
     </el-row>
   </el-dialog>
 </template>
 <script>
   import { database, DB_STORE_NAME } from '@/helper/db';
-  import { loadImages } from '@/helper/algorithm';
+  import { getRepeatNum, shuffle, loadImages } from '@/helper/algorithm';
 
   export default {
     name: 'Batchimport',
@@ -43,20 +44,21 @@
     },
     data() {
       return {
+        files: [],
         images: [],
         selectTip: '点击选择照片'
       };
     },
     methods: {
       inputChange(e) {
-        const files = [];
+        const _files = [];
         const fileList = e.target.files;
 
         for (let i = 0; i < fileList.length; i++) {
-          files.push(fileList[i]);
+          _files.push(fileList[i]);
         }
 
-        const errExtName = Object.values(files).filter(f => {
+        const errExtName = Object.values(_files).filter(f => {
           const extName = f.name.substring(f.name.lastIndexOf('.') + 1);
           return !extName || ['PNG', 'JPG'].indexOf(extName.toUpperCase()) < 0;
         });
@@ -66,15 +68,28 @@
         }
 
         const AllowImgFileSize = 1024 * 150;
-        const errSize = files.every(file => AllowImgFileSize < file.size);
+        const errSize = _files.every(file => AllowImgFileSize < file.size);
         if (errSize.length) {
           return this.$message.error('不允许上传大于150KB的图片');
         }
 
-        loadImages(files).then((result) => {
-          this.images = result;
-        });
+        this.files = _files;
 
+        this.randomSort();
+      },
+      randomSort() {
+        shuffle(this.files);
+
+        const mapData = this.files.map(m => m.name.split('-')[0]);
+
+        const departmentCount = getRepeatNum(mapData);
+
+        // console.log('mapData', mapData);
+        console.log('部门人数：', departmentCount);
+
+        this.$store.commit('setDepartment', departmentCount);
+
+        loadImages(this.files).then(result => this.images = result);
       },
       async saveHandler() {
 
@@ -83,6 +98,12 @@
           value: m.source,
           name: m.filename ? m.filename.replace(/(.*\/)*([^.]+).*/ig, "$2") : ''
         }));
+
+        const peopleNum = items.map(m => ({ id: m.id, name: m.name }));
+
+        console.log('人员编号：', peopleNum);
+
+        this.$store.commit('setPeopleNum', peopleNum);
 
         database['addMultiple'](DB_STORE_NAME, items)
           .then(res => {

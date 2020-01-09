@@ -6,14 +6,14 @@
     <el-button size="mini" @click="showRemoveoptions = true">
       重置
     </el-button>
-    <el-button size="mini" @click="showImport = true">
+    <!-- <el-button size="mini" @click="showImport = true">
       导入名单
     </el-button>
     <el-button size="mini" @click="showImportphoto = true">
       导入照片
-    </el-button>
+    </el-button> -->
     <el-button size="mini" @click="showBatchImport = true">
-      批量导入
+      导入
     </el-button>
     <el-dialog :append-to-body="true" :visible.sync="showSetwat" class="setwat-dialog" width="400px">
       <el-form ref="form" :model="form" label-width="80px" size="mini">
@@ -51,12 +51,12 @@
           </el-input>
         </el-form-item>
 
-        <el-form-item label="全员参与">
+        <!-- <el-form-item label="全员参与">
           <el-switch v-model="form.allin"></el-switch>
           <span :style="{ fontSize: '12px' }">
             (开启后将在全体成员[无论有无中奖]中抽奖)
           </span>
-        </el-form-item>
+        </el-form-item> -->
 
         <el-form-item>
           <el-button type="primary" @click="onSubmit">立即抽奖</el-button>
