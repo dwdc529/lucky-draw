@@ -32,6 +32,24 @@ export function getDomData(element, dataName) {
   }
   return element.getAttribute('data-' + dataName);
 }
+export function shuffleSelf(array, size) {
+  var index = -1,
+    length = array.length,
+    lastIndex = length - 1;
+
+  size = size === undefined ? length : size;
+  while (++index < size) {
+    // var rand = baseRandom(index, lastIndex),
+    var rand = index + Math.floor(Math.random() * (lastIndex - index + 1));
+    var value = array[rand];
+
+    array[rand] = array[index];
+
+    array[index] = value;
+  }
+  array.length = size;
+  return array;
+}
 
 export const configField = 'config'; // 配置数据
 export const resultField = 'result'; // 抽奖结果

@@ -3,18 +3,21 @@
     <el-button @click="startHandler" type="warning" size="mini">
       {{ running ? '停止' : '开始' }}
     </el-button>
+    <el-button size="mini" @click="showSetwat = true">
+      奖项
+    </el-button>
     <el-button size="mini" @click="showRemoveoptions = true">
       重置
     </el-button>
-    <!-- <el-button size="mini" @click="showImport = true">
-      导入名单
-    </el-button>
-    <el-button size="mini" @click="showImportphoto = true">
-      导入照片
-    </el-button> -->
-    <el-button size="mini" @click="showBatchImport = true">
+    <el-button size="mini" @click="showImport = true">
       导入
     </el-button>
+    <!-- <el-button size="mini" @click="showImportphoto = true">
+      导入照片
+    </el-button>
+    <el-button size="mini" @click="showBatchImport = true">
+      导入
+    </el-button> -->
     <el-dialog :append-to-body="true" :visible.sync="showSetwat" class="setwat-dialog" width="400px">
       <el-form ref="form" :model="form" label-width="80px" size="mini">
         <el-form-item label="抽取奖项">
@@ -59,17 +62,17 @@
         </el-form-item> -->
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">立即抽奖</el-button>
+          <el-button type="primary" @click="onSubmit">确定</el-button>
           <el-button @click="showSetwat = false">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
 
     <el-dialog :append-to-body="true" :visible.sync="showImport" class="import-dialog" width="400px">
-      <el-input type="textarea" :rows="10" placeholder="请输入对应的号码和名单(可直接从excel复制)，格式(号码 名字)，导入的名单将代替号码显示在抽奖中。如：
-1 张三
-2 李四
-3 王五
+      <el-input type="textarea" :rows="10" placeholder="请输入对应的号码和名单(可直接从excel复制)，格式(号码 部门-名字)，部门不要太长，导入的名单将代替号码显示在抽奖中。如：
+01 软件部-张三
+02 工程部-李四
+03 销售部-王五
 				" v-model="listStr"></el-input>
       <div class="footer">
         <el-button size="mini" type="primary" @click="transformList">确定</el-button>
@@ -106,6 +109,7 @@
     configField,
     listField,
     resultField,
+    shuffleSelf,
     conversionCategoryName
   } from '@/helper/index';
   import Importphoto from './Importphoto';
@@ -163,7 +167,7 @@
         removeInfo: { type: 0 },
         form: {
           category: '',
-          mode: 1,
+          mode: 0,
           qty: 1,
           allin: false
         },
@@ -232,6 +236,14 @@
           });
       },
       onSubmit() {
+
+        this.showSetwat = false;
+        // this.$emit('toggle', Object.assign({}, this.form, { remain: this.remain }));
+      },
+      startHandler() {
+        this.$emit('toggle');
+        if (!this.running) {
+          // this.showSetwat = true;
         if (!this.form.category) {
           return this.$message.error('请选择本次抽取的奖项');
         }
@@ -251,13 +263,7 @@
             return this.$message.error('本次抽奖人数已超过本奖项的剩余人数');
           }
         }
-        this.showSetwat = false;
-        this.$emit('toggle', Object.assign({}, this.form, { remain: this.remain }));
-      },
-      startHandler() {
-        this.$emit('toggle');
-        if (!this.running) {
-          this.showSetwat = true;
+          this.$emit('toggle', Object.assign({}, this.form, { remain: this.remain }));
         }
       },
       transformList() {
@@ -266,10 +272,14 @@
           this.$message.error('没有数据');
         }
         const list = [];
-        const rows = listStr.split('\n');
+        const _rows = listStr.split('\n');
+        console.log('_rows', _rows);
+        const rows = shuffleSelf(_rows);
+        console.log('shuffle rows', rows);
         if (rows && rows.length > 0) {
           rows.forEach(item => {
             const rowList = item.split(/\t|\s/);
+            console.log('rowList',rowList);
             if (rowList.length >= 2) {
               const key = Number(rowList[0].trim());
               const name = rowList[1].trim();

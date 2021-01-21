@@ -12,10 +12,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     config: {
-      name: '深圳市晶泓科技有限公司2020年会抽奖程序',
-      number: 174,
-      specialAward: 2,
-      firstPrize: 3,
+      name: '深圳市晶泓科技有限公司2021年会抽奖程序',
+      number: 112,
+      specialAward: 0,
+      firstPrize: 2,
       secondPrize: 5,
       thirdPrize: 10,
       fourthPrize: 0,
@@ -36,10 +36,10 @@ export default new Vuex.Store({
   mutations: {
     setClearConfig(state) {
       state.config = {
-        name: '深圳市晶泓科技有限公司2020年会抽奖程序',
-        number: 174,
-        specialAward: 2,
-        firstPrize: 3,
+        name: '深圳市晶泓科技有限公司2021年会抽奖程序',
+        number: 112,
+        specialAward: 0,
+        firstPrize: 2,
         secondPrize: 5,
         thirdPrize: 10,
         fourthPrize: 0,
@@ -65,10 +65,10 @@ export default new Vuex.Store({
     },
     setClearStore(state) {
       state.config = {
-        name: '深圳市晶泓科技有限公司2020年会抽奖程序',
-        number: 174,
-        specialAward: 2,
-        firstPrize: 3,
+        name: '深圳市晶泓科技有限公司2021年会抽奖程序',
+        number: 112,
+        specialAward: 0,
+        firstPrize: 2,
         secondPrize: 5,
         thirdPrize: 10,
         fourthPrize: 0,
@@ -118,6 +118,7 @@ export default new Vuex.Store({
         }
       });
       state.list = arr;
+      state.config.number = arr.length;
 
       setData(listField, arr);
     },
